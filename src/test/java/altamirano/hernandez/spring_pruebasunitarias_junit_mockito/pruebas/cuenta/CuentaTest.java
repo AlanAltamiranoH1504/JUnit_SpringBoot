@@ -2,17 +2,26 @@ package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.pruebas.cuent
 
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.DineroInsuficienteException;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.MontoNegativoException;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Banco;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Cuenta;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.IBancoRepository;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.ICuentaRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.TestTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 
 
 @SpringBootTest
 public class CuentaTest {
+
+    @Autowired
+    private IBancoRepository iBancoRepository;
+    @Autowired
+    private ICuentaRepository iCuentaRepository;
 
     @Test
     void nombreCuentaTest() {
@@ -85,5 +94,42 @@ public class CuentaTest {
         String actual = exception.getMessage();
         String esperado = "El monto del retiro no puede ser negativo";
         assertEquals(esperado, actual, "El mensaje de la expecion no es igual a: " + esperado);
+    }
+
+    @Test
+    @Rollback(value = true)
+    void testTransferenciaDineroCuentas() {
+        //Creacion de bancos
+        Banco banco = new Banco("CitiBanamex");
+        Banco banco2 = new Banco("BBVA");
+        iBancoRepository.save(banco);
+        iBancoRepository.save(banco2);
+        assertNotNull(iBancoRepository.findAll(), "No hay bancos registrados en la base de datos");
+
+        //Creacion de cuentas con bancos asociados
+        Cuenta cuentaOrigen = new Cuenta("Alan", "Altamirano Hernandez", 40000, banco);
+        Cuenta cuentaDestino = new Cuenta("Itzel", "Altamirano Hernandez", 35000, banco2);
+
+        //Aseguramos que las cuentas no sean nullas y los saldos mayores a 0
+        assertNotNull(cuentaOrigen, "El objeto cuentaOrigen es null");
+        assertNotNull(cuentaDestino, "El objeto cuentaDestino es null");
+        assertNotEquals(0, cuentaOrigen.getSaldo(), "El saldo de la cuentaOrigen es igual a 0");
+        assertNotEquals(0, cuentaDestino.getSaldo(), "El saldo de la cuentaDestino es igual a 0");
+
+        iCuentaRepository.save(cuentaOrigen);
+        iCuentaRepository.save(cuentaDestino);
+        assertNotNull(iCuentaRepository.findAll(), "No hay cuentas registradas en la base de datos");
+
+        //Creacion de banco y proceso de transferencia
+        Banco bancoBanamex = iBancoRepository.findByNombre("CitiBanamex");
+        assertNotEquals(null, bancoBanamex.getNombre(), "El nombre del banco es null");
+        banco.transferir(cuentaOrigen, cuentaDestino, 5000);
+
+        //Comprobacion de transferencia
+        assertEquals(35000, cuentaOrigen.getSaldo(), "El saldo actualizado de la cuenta origen no es igual a 35000");
+        assertEquals(40000, cuentaDestino.getSaldo(), "El saldo actualizado de la cuenta destino no es igual a 40000");
+
+        iCuentaRepository.save(cuentaOrigen);
+        iCuentaRepository.save(cuentaDestino);
     }
 }
