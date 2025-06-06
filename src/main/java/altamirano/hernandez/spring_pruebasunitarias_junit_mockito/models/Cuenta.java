@@ -1,5 +1,8 @@
 package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models;
 
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.DineroInsuficienteException;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.MontoNegativoException;
+
 import java.util.Objects;
 
 public class Cuenta {
@@ -10,11 +13,13 @@ public class Cuenta {
 
     public Cuenta() {
     }
+
     public Cuenta(String nombre, String apellidos, double saldo) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.saldo = saldo;
     }
+
     public Cuenta(int id, String nombre, String apellidos, double saldo) {
         this.id = id;
         this.nombre = nombre;
@@ -53,6 +58,20 @@ public class Cuenta {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    public void retiro(double monto) {
+        if (this.getSaldo() < monto){
+            throw new DineroInsuficienteException("Dinero insuficiente");
+        }
+        if (monto <= 0) {
+            throw new MontoNegativoException("El monto del retiro no puede ser negativo");
+        }
+        this.setSaldo(this.getSaldo() - monto);
+    }
+
+    public void deposito(double monto) {
+        this.setSaldo(this.getSaldo() + monto);
     }
 
     // E y H
