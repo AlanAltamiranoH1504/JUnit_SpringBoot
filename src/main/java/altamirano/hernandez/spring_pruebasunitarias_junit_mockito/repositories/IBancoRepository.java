@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface IBancoRepository extends CrudRepository<Banco, Integer> {
+import java.util.Optional;
 
+public interface IBancoRepository extends CrudRepository<Banco, Integer> {
     @Query("SELECT b FROM Banco b WHERE b.nombre =:nombre")
-    Banco findByNombre(@Param("nombre") String nombre);
+    Optional<Banco> findByNombre(@Param("nombre") String nombre);
 }

@@ -6,13 +6,17 @@ import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Banco;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Cuenta;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.IBancoRepository;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.ICuentaRepository;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
+
+import java.util.Optional;
 
 
 @SpringBootTest
@@ -22,6 +26,11 @@ public class CuentaTest {
     private IBancoRepository iBancoRepository;
     @Autowired
     private ICuentaRepository iCuentaRepository;
+
+    @AfterAll()
+    static void testCompletados() {
+        System.out.println("Testing completados");
+    }
 
     @Test
     void nombreCuentaTest() {
@@ -97,39 +106,69 @@ public class CuentaTest {
     }
 
     @Test
-    @Rollback(value = true)
-    void testTransferenciaDineroCuentas() {
-        //Creacion de bancos
-        Banco banco = new Banco("CitiBanamex");
-        Banco banco2 = new Banco("BBVA");
+    @DisplayName("Test de almacanaje de nuevo banco")
+    @Transactional
+    void testSaveBanco() {
+        Banco banco = new Banco("Banco de prueba");
         iBancoRepository.save(banco);
-        iBancoRepository.save(banco2);
-        assertNotNull(iBancoRepository.findAll(), "No hay bancos registrados en la base de datos");
 
-        //Creacion de cuentas con bancos asociados
-        Cuenta cuentaOrigen = new Cuenta("Alan", "Altamirano Hernandez", 40000, banco);
-        Cuenta cuentaDestino = new Cuenta("Itzel", "Altamirano Hernandez", 35000, banco2);
+        Optional<Banco> bancoBusqueda = iBancoRepository.findByNombre("Banco de prueba");
+        assertTrue(bancoBusqueda.isPresent(), "El banco no fue insertado en la base de datos");
+    }
 
-        //Aseguramos que las cuentas no sean nullas y los saldos mayores a 0
-        assertNotNull(cuentaOrigen, "El objeto cuentaOrigen es null");
-        assertNotNull(cuentaDestino, "El objeto cuentaDestino es null");
-        assertNotEquals(0, cuentaOrigen.getSaldo(), "El saldo de la cuentaOrigen es igual a 0");
-        assertNotEquals(0, cuentaDestino.getSaldo(), "El saldo de la cuentaDestino es igual a 0");
+    @Test
+    @DisplayName("Test de busqueda de banco por su nombre")
+    @Transactional
+    void testFindBancoByNombre() {
+        Optional<Banco> bancoCitiBanamex = iBancoRepository.findByNombre("CitiBanamex");
+        assertTrue(bancoCitiBanamex.isPresent(), "El banco no existe dentro de la base de datos");
+    }
 
-        iCuentaRepository.save(cuentaOrigen);
-        iCuentaRepository.save(cuentaDestino);
-        assertNotNull(iCuentaRepository.findAll(), "No hay cuentas registradas en la base de datos");
+    @Test
+    @DisplayName("Test de almacenamiento de nueva cuenta")
+    @Transactional
+    void testSaveCuenta() {
+        Banco bancoPrueba = new Banco("Banco de prueba");
+        iBancoRepository.save(bancoPrueba);
 
-        //Creacion de banco y proceso de transferencia
-        Banco bancoBanamex = iBancoRepository.findByNombre("CitiBanamex");
-        assertNotEquals(null, bancoBanamex.getNombre(), "El nombre del banco es null");
-        banco.transferir(cuentaOrigen, cuentaDestino, 5000);
+        Cuenta cuentaPrueba = new Cuenta("Prueba", "Apellidos de Prueba", 50000, bancoPrueba);
+        iCuentaRepository.save(cuentaPrueba);
 
-        //Comprobacion de transferencia
-        assertEquals(35000, cuentaOrigen.getSaldo(), "El saldo actualizado de la cuenta origen no es igual a 35000");
-        assertEquals(40000, cuentaDestino.getSaldo(), "El saldo actualizado de la cuenta destino no es igual a 40000");
+        Optional<Cuenta> cuentaBusqueda = iCuentaRepository.findByNombreAndApellidos("Prueba", "Apellidos de Prueba");
+        assertTrue(cuentaBusqueda.isPresent(), "La cuenta no fue registrada en la base de datos");
+    }
 
-        iCuentaRepository.save(cuentaOrigen);
-        iCuentaRepository.save(cuentaDestino);
+    @Test
+    @DisplayName("Test de Transferencia de Dinero entre Cuentas")
+    @Transactional
+    void testTrasferenciaDineroEntreCuentas() {
+        //Creacion de bancos
+        Banco bancoPrueba1 = new Banco("Banco de prueba 1");
+        Banco bancoPrueba2 = new Banco("Banco de prueba 2");
+        iBancoRepository.save(bancoPrueba1);
+        iBancoRepository.save(bancoPrueba2);
+
+        //Creacion de cuentas
+        Cuenta cuenta1 = new Cuenta("Alan", "Altamirano Hernandez", 40000, bancoPrueba1);
+        Cuenta cuenta2 = new Cuenta("Vanessa Adriana", "Rivera Garcia", 35000, bancoPrueba2);
+        iCuentaRepository.save(cuenta1);
+        iCuentaRepository.save(cuenta2);
+
+        //Proceso de transferencia
+        bancoPrueba1.transferir(cuenta1, cuenta2, 5000);
+        iCuentaRepository.save(cuenta1);
+        iCuentaRepository.save(cuenta2);
+
+        assertEquals(40000, cuenta2.getSaldo(), "El saldo de la cuenta2 no es igual a 40000");
+        assertEquals(35000, cuenta1.getSaldo(), "El saldo de la cuenta1 no es igual a 35000");
+
+        assertAll(
+                () -> assertNotNull(iBancoRepository.findAll(), "No hay bancos en la base de datos"),
+                () -> assertNotNull(iCuentaRepository.findAll(), "No hay cuentas registradas en la base de datos"),
+                () -> {
+                    assertEquals(40000, cuenta2.getSaldo(), "El saldo de la cuenta2 no es igual a 40000");
+                    assertEquals(35000, cuenta1.getSaldo(), "El saldo de la cuenta1 no es igual a 35000");
+                }
+        );
     }
 }
