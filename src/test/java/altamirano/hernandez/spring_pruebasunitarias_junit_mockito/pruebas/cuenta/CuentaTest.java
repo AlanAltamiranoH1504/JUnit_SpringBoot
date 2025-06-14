@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -170,5 +173,23 @@ public class CuentaTest {
                     assertEquals(35000, cuenta1.getSaldo(), "El saldo de la cuenta1 no es igual a 35000");
                 }
         );
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    void testSoloWindows(){
+
+    }
+
+    @Test
+    @EnabledOnOs(OS.MAC)
+    void testSoloMac() {
+
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testNoWindows() {
+
     }
 }
