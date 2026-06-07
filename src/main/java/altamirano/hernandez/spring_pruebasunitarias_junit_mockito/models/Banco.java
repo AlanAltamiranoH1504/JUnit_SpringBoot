@@ -12,7 +12,7 @@ public class Banco {
     private int id;
     private String nombre;
 
-    //Un banco para muchas cuentas
+    // * Un banco para muchas cuentas
     @OneToMany(mappedBy = "banco")
     private List<Cuenta> cuentas = new ArrayList<>();
 
@@ -41,6 +41,18 @@ public class Banco {
 
     public void setCuentas(List<Cuenta> cuentas) {
         this.cuentas = cuentas;
+    }
+
+    public void addCuenta(Cuenta cuenta) {
+        this.cuentas.add(cuenta);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     //Metodos de la clase

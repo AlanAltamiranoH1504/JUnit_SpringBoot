@@ -16,7 +16,7 @@ public class Cuenta {
     private String apellidos;
     private double saldo;
 
-    //Muchas cuentas para un banco
+    // * Una cuenta pertenece a un banco
     @ManyToOne
     @JoinColumn(name = "banco_id")
     private Banco banco;
