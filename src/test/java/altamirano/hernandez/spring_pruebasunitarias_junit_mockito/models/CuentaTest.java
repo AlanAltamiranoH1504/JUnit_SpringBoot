@@ -3,6 +3,9 @@ package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.DineroInsuficienteException;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.MontoNegativoException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
+
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -146,6 +149,62 @@ class CuentaTest {
                 () -> assertTrue(bank.getCuentas().stream() // * Evaluar que exista al menos una cuenta con el nombre Alan
                         .anyMatch(cuenta -> cuenta.getNombre().equals("Alan")), "No existe ninguna cuenta propidad de Alan")
         );
+    }
+
+    // * CONDITIONAL TEST (OS, ENVs, ETC)
+    @Test
+    @DisplayName("Test Aplicable solo a SO Windows")
+    @EnabledOnOs(OS.WINDOWS)
+    void onlyWindows() {
+    }
+
+    @Test
+    @DisplayName("Test aplicable a solo SO Linux")
+    @EnabledOnOs(OS.LINUX)
+    void onlyLinux() {
+    }
+
+    @Test
+    @DisplayName("Test aplicable a solo SO MAC")
+    @EnabledOnOs(OS.MAC)
+    void onlyMac() {
+    }
+
+    @Test
+    @DisplayName("Test aplicable solo en Java 21")
+    @EnabledOnJre(JRE.JAVA_21)
+    void onlyJava21() {
+    }
+
+    @Test
+    @DisplayName("Test aplicable solo en Java 8")
+    @EnabledOnJre(JRE.JAVA_8)
+    void onlyJava8() {
+    }
+
+    @Test
+    @DisplayName("Test de visualizacion de propiedades del sistema")
+    void showSystemProperties() {
+        Properties systemProperties = System.getProperties();
+        systemProperties.forEach((key, value) -> System.out.println(key + ": "  + value));
+    }
+
+    @Test
+    @DisplayName("Test de arquitectura de 64 bits")
+    @EnabledIfSystemProperty(named = "sun.arch.data.model", matches = "64")
+    void onnlyArchDataModel64() {
+    }
+
+    @Test
+    @DisplayName("Test de muestra de variables de ambiente")
+    void showEnviromentVariables() {
+        System.getenv().forEach((key, value) -> System.out.println(key + ": " + value));
+    }
+
+    @Test
+    @DisplayName("Test de validacion de usuario Alan")
+    @EnabledIfEnvironmentVariable(named = "USERDOMAIN_ROAMINGPROFILE", matches = "ALAN_AH")
+    void onlyUserDomainAlan() {
     }
 
     // * LIMPIEZA DE OBJETOS GENERALES EN CADA PRUEBA
