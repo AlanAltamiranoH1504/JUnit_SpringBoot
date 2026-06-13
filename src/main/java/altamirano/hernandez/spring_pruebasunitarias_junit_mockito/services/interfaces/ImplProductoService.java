@@ -1,7 +1,7 @@
 package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.services.interfaces;
 
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Producto;
-import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.IProductoRepository;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces.IProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

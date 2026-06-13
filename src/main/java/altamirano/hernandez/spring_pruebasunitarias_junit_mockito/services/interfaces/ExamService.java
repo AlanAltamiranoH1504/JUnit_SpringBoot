@@ -3,22 +3,21 @@ package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.services.inte
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.dto.ExamRequestDTO;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.dto.ExamResponseDTO;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.NotFoundEntityException;
-import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Exam;
-import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.IExamRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces.IExamRepository;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces.IQuestionRepository;
+import lombok.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
+@Builder
 @Service
 public class ExamService implements IExamService {
     private IExamRepository iExamRepository;
+    private IQuestionRepository iQuestionRepository;
 
     @Override
     public List<ExamResponseDTO> listExams() {

@@ -1,4 +1,4 @@
-package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories;
+package altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces;
 
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Banco;
 import org.springframework.data.jpa.repository.Query;

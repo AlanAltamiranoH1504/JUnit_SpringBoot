@@ -4,8 +4,8 @@ import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.Dine
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.MontoNegativoException;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Banco;
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.models.Cuenta;
-import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.IBancoRepository;
-import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.ICuentaRepository;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces.IBancoRepository;
+import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.repositories.interfaces.ICuentaRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
