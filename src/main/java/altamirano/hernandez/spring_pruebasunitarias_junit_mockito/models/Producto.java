@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,13 +26,16 @@ public class Producto {
     private String descripcion;
 
     @Positive(message = "El precio debe ser mayor a 0")
-    private Double precio;
+    private BigDecimal precio;
+
+    @ManyToMany(mappedBy = "productos")
+    List<ShoopingCar> shoopingCars =  new ArrayList<>();
 
     //Constructores
     public Producto(){
 
     }
-    public Producto(String nombre, String descripcion, Double precio) {
+    public Producto(String nombre, String descripcion, BigDecimal precio) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -60,11 +66,11 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 

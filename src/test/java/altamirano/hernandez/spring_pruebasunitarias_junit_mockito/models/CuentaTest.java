@@ -4,6 +4,8 @@ import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.Dine
 import altamirano.hernandez.spring_pruebasunitarias_junit_mockito.exeptions.MontoNegativoException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Properties;
 
@@ -205,6 +207,13 @@ class CuentaTest {
     @DisplayName("Test de validacion de usuario Alan")
     @EnabledIfEnvironmentVariable(named = "USERDOMAIN_ROAMINGPROFILE", matches = "ALAN_AH")
     void onlyUserDomainAlan() {
+    }
+
+    @ParameterizedTest
+    @DisplayName("Validación de montos de cuenta")
+    @ValueSource(ints = {10000, 15000, 14000, 14990, 15040})
+    void test_account_amount_parametrizado(int number) {
+        assertTrue(originAccount.getSaldo() > number);
     }
 
     // * LIMPIEZA DE OBJETOS GENERALES EN CADA PRUEBA
