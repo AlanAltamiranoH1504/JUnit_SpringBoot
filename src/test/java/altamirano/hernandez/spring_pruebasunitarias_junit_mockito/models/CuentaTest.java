@@ -132,9 +132,6 @@ class CuentaTest {
     @Test
     @DisplayName("Validación de funcionamiento assert all")
     void test_assert_all() {
-//        Banco bank = new Banco("Santander");
-//        Cuenta originAccount = new Cuenta("Alan", "Altamirano Hernández", 15000, bank);
-//        Cuenta targetAccount = new Cuenta("Itzel", "Altamirano Hernández", 10000, bank);
         bank.addCuenta(originAccount);
         bank.addCuenta(targetAccount);
 
